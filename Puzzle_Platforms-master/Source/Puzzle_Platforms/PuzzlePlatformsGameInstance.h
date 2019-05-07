@@ -20,9 +20,19 @@ protected:
 
 public:
 
+	UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn);
+
+	UFUNCTION(Exec, BlueprintCallable)
+	void LoadMenu();
+
 	UFUNCTION(Exec)
 	void Host();
 
 	UFUNCTION(Exec)
 	void Join(FString& Address);
+
+private:
+
+	TSubclassOf<class UUserWidget> MenuClass;
+
 };
