@@ -7,6 +7,7 @@
 #include "ConstructorHelpers.h"
 #include "TriggerPlatform.h"
 #include "Blueprint/UserWidget.h"
+#include "MenuSystem/MainMenu.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn)
 {
@@ -32,27 +33,19 @@ void UPuzzlePlatformsGameInstance::Init()
 		UE_LOG(LogTemp, Warning, TEXT("Found Menu Class: %s"), *MenuClass->GetName());
 
 	}
-
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!ensure(MenuClass)) return;
 	
-	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	UMainMenu* Menu = CreateWidget<UMainMenu>(this, MenuClass);
 
 	if (!ensure(Menu)) return;
 
-	Menu->AddToViewport();
-
-	auto PC = GetFirstLocalPlayerController();
-
-	FInputModeUIOnly InputMode;
-	InputMode.SetWidgetToFocus(Menu->TakeWidget());
-	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	PC->SetInputMode(InputMode);
-	PC->bShowMouseCursor = true;
+	Menu->Setup();
+	Menu->SetMenuInterface(this);
+	
 }
 
 void UPuzzlePlatformsGameInstance::Host()
