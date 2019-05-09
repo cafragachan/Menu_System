@@ -27,14 +27,30 @@ public:
 	UFUNCTION(Exec, BlueprintCallable)
 	void LoadMenu();
 
+	UFUNCTION(Exec, BlueprintCallable)
+	void CreatePlayerMenu();
+
+	UFUNCTION(Exec, BlueprintCallable)
+	void LoadPlayerMenu();
+
+	UFUNCTION(Exec, BlueprintCallable)
+	void UnloadPlayerMenu();
+
 	UFUNCTION(Exec)
 	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	void Join(FString& Address);
+	virtual void Join(FString& Address) override;
+
+	UFUNCTION(Exec)
+	virtual void Leave() override;
 
 private:
 
+	class UPlayerMenu* PlayerMenu;
+
 	TSubclassOf<class UUserWidget> MenuClass;
+
+	TSubclassOf<class UUserWidget> PlayerMenuClass;
 
 };
