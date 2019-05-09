@@ -9,6 +9,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/PlayerMenu.h"
+#include "OnlineSubsystem.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn)
 {
@@ -42,6 +43,22 @@ void UPuzzlePlatformsGameInstance::Init()
 	if (ensure(MenuClass))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Found Menu Class: %s"), *MenuClass->GetName());
+
+	}
+
+	IOnlineSubsystem* OSS = IOnlineSubsystem::Get();
+	if (OSS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OSS Name: %s"), *OSS->GetSubsystemName().ToString());
+		auto SessionInterface = OSS->GetSessionInterface();
+
+		if (!SessionInterface) return;
+		UE_LOG(LogTemp, Warning, TEXT("Session Interface found"));
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OSS not found"));
 
 	}
 }
