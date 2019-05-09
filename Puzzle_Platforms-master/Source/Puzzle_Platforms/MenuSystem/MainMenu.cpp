@@ -23,6 +23,9 @@ bool UMainMenu::Initialize()
 	if (!CancelButton) return false;
 	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::BackMenu);
 
+	if (!QuitButton) return false;
+	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
+
 	return true;
 }
 
@@ -84,4 +87,15 @@ void UMainMenu::OnLevelRemovedFromWorld(ULevel * InLevel, UWorld * InWorld)
 	PC->bShowMouseCursor = false;
 	FInputModeGameOnly GameInputMode;
 	PC->SetInputMode(GameInputMode);
+}
+
+void UMainMenu::QuitGame()
+{
+	UWorld* World = GetWorld();
+
+	if (!ensure(World)) return;
+	auto PC = World->GetFirstPlayerController();
+
+	if (!PC) return;
+	PC->ConsoleCommand("Quit");
 }
