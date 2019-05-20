@@ -5,6 +5,10 @@
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
+#include "Components/ScrollBox.h"
+#include "Components/TextBlock.h"
+
+#include "TextWidget.h"
 
 bool UMainMenu::Initialize()
 {
@@ -37,11 +41,27 @@ void UMainMenu::HostOnClicked()
 
 void UMainMenu::JoinOnClicked()
 {
-	if (!ensure(MenuInterface && IPAddressField)) return;
+	if (!ensure(MenuInterface)) return;
 
-	FString IPString = IPAddressField->GetText().ToString();
+	//FString IPString = IPAddressField->GetText().ToString();
+	FString TestStringToDelete;
+	MenuInterface->Join(TestStringToDelete);
+}
 
-	MenuInterface->Join(IPString);
+void UMainMenu::SetServerList(TArray<FString> ServerNames_)
+{
+	if (ScrollBar && TextWidgetBase)
+	{
+		ScrollBar->ClearChildren();
+
+		for (auto& ServerName : ServerNames_)
+		{
+			UTextWidget* TextWidget;
+			TextWidget = CreateWidget<UTextWidget>(this, TextWidgetBase);
+			TextWidget->ServerName->SetText(FText::FromString(ServerName));
+			ScrollBar->AddChild(TextWidget);
+		}
+	}
 }
 
 void UMainMenu::SwitchMenu()

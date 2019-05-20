@@ -49,7 +49,13 @@ private:
 	class UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* IPAddressField;
+	class UScrollBox* ScrollBar;
+
+	//UPROPERTY(meta = (BindWidget))
+	//class UEditableTextBox* IPAddressField;
+
+	UPROPERTY(EditdefaultsOnly)
+	TSubclassOf<class UTextWidget> TextWidgetBase;
 
 	UFUNCTION()
 	void HostOnClicked();
@@ -69,6 +75,8 @@ private:
 	IMenuInterface* MenuInterface;
 
 public:
+
+	void SetServerList(TArray<FString> ServerNames_);
 
 	void SetMenuInterface(IMenuInterface* MenuInterface_) { MenuInterface = MenuInterface_; }
 

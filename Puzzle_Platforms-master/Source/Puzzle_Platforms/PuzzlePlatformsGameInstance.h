@@ -48,9 +48,13 @@ public:
 	UFUNCTION(Exec)
 	virtual void Leave() override;
 
+	UFUNCTION(Exec)
+	virtual void Refresh() override;
+
 private:
 
 	class UPlayerMenu* PlayerMenu;
+	class UMainMenu* Menu;
 
 	TSubclassOf<class UUserWidget> MenuClass;
 

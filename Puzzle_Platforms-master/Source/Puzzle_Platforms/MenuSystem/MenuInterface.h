@@ -29,4 +29,6 @@ public:
 
 	virtual void Leave() = 0;
 
+	virtual void Refresh() = 0;
+
 };
