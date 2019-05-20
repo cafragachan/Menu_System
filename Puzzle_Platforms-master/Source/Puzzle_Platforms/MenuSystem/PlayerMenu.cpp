@@ -36,8 +36,6 @@ void UPlayerMenu::Load()
 
 void UPlayerMenu::Unload()
 {
-	UE_LOG(LogTemp, Warning, TEXT("unloadinggggg"));
-
 	UWorld* World = GetWorld();
 
 	if (!ensure(World)) return;
