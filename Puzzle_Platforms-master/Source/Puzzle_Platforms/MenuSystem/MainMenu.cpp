@@ -41,6 +41,16 @@ void UMainMenu::HostOnClicked()
 
 void UMainMenu::JoinOnClicked()
 {
+
+	if (SelectedIndex.IsSet())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Index server row: %i"), SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("index not set"));
+	}
+
 	if (!ensure(MenuInterface)) return;
 
 	//FString IPString = IPAddressField->GetText().ToString();
@@ -54,12 +64,16 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames_)
 	{
 		ScrollBar->ClearChildren();
 
+		uint32 i = 0;
 		for (auto& ServerName : ServerNames_)
 		{
 			UTextWidget* TextWidget;
 			TextWidget = CreateWidget<UTextWidget>(this, TextWidgetBase);
 			TextWidget->ServerName->SetText(FText::FromString(ServerName));
+			TextWidget->Setup(this, i);
+
 			ScrollBar->AddChild(TextWidget);
+			++i;
 		}
 	}
 }
@@ -93,6 +107,11 @@ void UMainMenu::Setup()
 
 	PC->SetInputMode(InputMode);
 	PC->bShowMouseCursor = true;
+}
+
+void UMainMenu::SetSelectedIndex(uint32 Index_)
+{
+	SelectedIndex = Index_;
 }
 
 void UMainMenu::OnLevelRemovedFromWorld(ULevel * InLevel, UWorld * InWorld)

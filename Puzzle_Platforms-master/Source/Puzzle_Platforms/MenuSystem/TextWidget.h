@@ -16,7 +16,22 @@ class PUZZLE_PLATFORMS_API UTextWidget : public UUserWidget
 
 public:
 
+	virtual bool Initialize() override;
+
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ServerName;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* RowButton;
+
+	UFUNCTION()
+	void TextWidgetOnClicked();
+
+	void Setup(class UMainMenu* Parent_, uint32 Index);
+
+
+private:
+
+	uint32 MyIndex;
+	class UMainMenu* Parent;
 };

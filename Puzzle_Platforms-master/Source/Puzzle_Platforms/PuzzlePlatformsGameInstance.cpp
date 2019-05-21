@@ -80,7 +80,7 @@ void UPuzzlePlatformsGameInstance::OnFindSessionComplete(bool bwasSuccesful)
 			SessionNamesFound.Add(Session.GetSessionIdStr());
 		}
 
-		Menu->SetServerList(SessionNamesFound);
+		//Menu->SetServerList(SessionNamesFound);
 	}
 
 }
@@ -144,6 +144,11 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 void UPuzzlePlatformsGameInstance::Join(FString & Address)
 {
 	Refresh();
+
+	if (Menu)
+	{
+		Menu->SetServerList({ "Test1", "Test2" });
+	}
 
 	/*UEngine* Engine = GetEngine();
 	if (!ensure(Engine)) return;

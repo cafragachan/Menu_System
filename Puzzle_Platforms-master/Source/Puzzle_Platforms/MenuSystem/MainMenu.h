@@ -74,6 +74,8 @@ private:
 
 	IMenuInterface* MenuInterface;
 
+	TOptional<uint32> SelectedIndex;
+
 public:
 
 	void SetServerList(TArray<FString> ServerNames_);
@@ -81,4 +83,6 @@ public:
 	void SetMenuInterface(IMenuInterface* MenuInterface_) { MenuInterface = MenuInterface_; }
 
 	void Setup();
+
+	void SetSelectedIndex(uint32 Index_);
 };
