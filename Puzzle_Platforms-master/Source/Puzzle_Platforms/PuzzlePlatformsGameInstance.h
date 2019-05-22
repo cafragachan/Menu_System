@@ -8,6 +8,7 @@
 
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "OnlineSessionInterface.h"
 
 #include "PuzzlePlatformsGameInstance.generated.h"
 
@@ -43,7 +44,7 @@ public:
 	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	virtual void Join(FString& Address) override;
+	virtual void Join(uint32 Index_) override;
 
 	UFUNCTION(Exec)
 	virtual void Leave() override;
@@ -62,10 +63,12 @@ private:
 
 	IOnlineSessionPtr SessionInterface;
 
-	TSharedPtr<FOnlineSessionSearch> SessionSearch = nullptr;
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
 	void OnFindSessionComplete(bool bwasSuccesful);
 	void OnCreateSessionComplete(FName SessionName, bool bwasSuccesful);
 	void OnDestroySessionComplete(FName SessionName, bool bwasSuccesful);
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType);
+
 	void CreateSession();
 };

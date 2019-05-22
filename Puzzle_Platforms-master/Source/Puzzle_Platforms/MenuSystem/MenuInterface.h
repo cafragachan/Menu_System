@@ -25,7 +25,7 @@ public:
 
 	virtual void Host() = 0;
 
-	virtual void Join(FString& Address) = 0;
+	virtual void Join(uint32 Index_) = 0;
 
 	virtual void Leave() = 0;
 

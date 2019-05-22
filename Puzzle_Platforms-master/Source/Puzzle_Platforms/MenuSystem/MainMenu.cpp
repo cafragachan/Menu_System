@@ -42,20 +42,18 @@ void UMainMenu::HostOnClicked()
 void UMainMenu::JoinOnClicked()
 {
 
-	if (SelectedIndex.IsSet())
+	if (SelectedIndex.IsSet() && MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Index server row: %i"), SelectedIndex.GetValue());
+		MenuInterface->Join(SelectedIndex.GetValue());
+
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("index not set"));
 	}
 
-	if (!ensure(MenuInterface)) return;
 
-	//FString IPString = IPAddressField->GetText().ToString();
-	FString TestStringToDelete;
-	MenuInterface->Join(TestStringToDelete);
 }
 
 void UMainMenu::SetServerList(TArray<FString> ServerNames_)
@@ -83,6 +81,10 @@ void UMainMenu::SwitchMenu()
 	if (!ensure(JoinMenu && WidgetSwitch)) return;
 
 	WidgetSwitch->SetActiveWidget(JoinMenu);
+
+	if (MenuInterface != nullptr) {
+		MenuInterface->Refresh();
+	}
 }
 
 void UMainMenu::BackMenu()
