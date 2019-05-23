@@ -7,13 +7,17 @@
 #include "ConstructorHelpers.h"
 #include "TriggerPlatform.h"
 #include "Blueprint/UserWidget.h"
+
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/PlayerMenu.h"
+#include "MenuSystem/LoadingMenu.h"
 
 #include "OnlineSessionSettings.h"
+#include "UnrealNames.h"
 
 
-const static FName SESSION_NAME = (TEXT("My Session Name"));
+const static FName SESSION_NAME = NAME_GameSession;
+const static FName SESSION_NAME_CONSTANT_KEY = (TEXT("SessionName"));
 
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn)
@@ -32,11 +36,21 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 
 	if (!ensure(PlayerMenuWidgetClass.Class))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Menu Class not found"));
+		UE_LOG(LogTemp, Warning, TEXT("Player Menu Class not found"));
 		return;
 	}
 
 	PlayerMenuClass = PlayerMenuWidgetClass.Class;
+
+	ConstructorHelpers::FClassFinder<UUserWidget> LoadingMenuWidgetClass(TEXT("/Game/MenuSystem/WBP_LoadingMenu"));
+
+	if (!ensure(LoadingMenuWidgetClass.Class))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Loading Menu Class not found"));
+		return;
+	}
+
+	LoadingMenuClass = LoadingMenuWidgetClass.Class;
 }
 
 
@@ -76,10 +90,19 @@ void UPuzzlePlatformsGameInstance::OnFindSessionComplete(bool bwasSuccesful)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Session found: %s"), *Session.GetSessionIdStr());
 			FServerData Data;
-			Data.Name = Session.GetSessionIdStr();
 			Data.MaxPlayers = Session.Session.SessionSettings.NumPublicConnections;
 			Data.CurrentPlayers = Data.MaxPlayers - Session.Session.NumOpenPublicConnections;
 			Data.HostUserName = Session.Session.OwningUserName;
+
+			FString SessionName;
+			if (Session.Session.SessionSettings.Get(SESSION_NAME_CONSTANT_KEY, SessionName))
+			{
+				Data.Name = SessionName;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Session Test NOT Found"));
+			}
 
 			SessionDataFound.Add(Data);
 		}
@@ -104,13 +127,13 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 	UWorld* World = GetWorld();
 	if (!ensure(World)) return;
 
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/Lobby?listen");
 }
 
 void UPuzzlePlatformsGameInstance::OnDestroySessionComplete(FName SessionName, bool bwasSuccesful)
 {
 	if (!bwasSuccesful) return;
-	CreateSession();
+	CreateSession(); //TODO Check what this is
 }
 
 void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType)
@@ -136,9 +159,11 @@ void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJ
 }
 
 
-void UPuzzlePlatformsGameInstance::Host()
+void UPuzzlePlatformsGameInstance::Host(FString SessionName_)
 {
 	if (!SessionInterface.IsValid()) return;
+
+	DesiredSessionName = SessionName_;
 
 	auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
 
@@ -171,6 +196,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.NumPublicConnections = 2;
 	SessionSettings.bUsesPresence = true;
+	SessionSettings.Set(SESSION_NAME_CONSTANT_KEY, DesiredSessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 }
@@ -219,6 +245,15 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 	Menu->Setup();
 	Menu->SetMenuInterface(this);
 
+}
+
+void UPuzzlePlatformsGameInstance::LoadLoadingMenu()
+{
+	if (!ensure(LoadingMenuClass)) return;
+	LoadingMenu = CreateWidget<ULoadingMenu>(this, LoadingMenuClass);
+
+	if (!ensure(LoadingMenu)) return;
+	LoadingMenu->Setup();
 }
 
 void UPuzzlePlatformsGameInstance::CreatePlayerMenu()

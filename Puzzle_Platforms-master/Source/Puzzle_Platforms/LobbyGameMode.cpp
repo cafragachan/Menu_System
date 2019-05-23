@@ -1,0 +1,39 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "LobbyGameMode.h"
+
+#include "SoftObjectPath.h"
+#include "GameMapsSettings.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
+
+void ALobbyGameMode::PostLogin(APlayerController * NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	PlayersNum++;
+
+	if (PlayersNum >= 3)
+	{
+		FTimerHandle Timer;
+		GetWorldTimerManager().SetTimer(Timer, this, &ALobbyGameMode::PlayersServerTravel, 3.0f, false);
+
+	}
+}
+
+void ALobbyGameMode::Logout(AController * Exiting)
+{
+	Super::Logout(Exiting);
+
+	PlayersNum--;
+}
+
+void ALobbyGameMode::PlayersServerTravel()
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World)) return;
+
+	bUseSeamlessTravel = true;
+
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+}

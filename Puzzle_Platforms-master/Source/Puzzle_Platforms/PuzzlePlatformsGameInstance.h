@@ -28,6 +28,10 @@ public:
 
 	UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn);
 
+
+	UFUNCTION(Exec, BlueprintCallable)
+	void LoadLoadingMenu();
+
 	UFUNCTION(Exec, BlueprintCallable)
 	void LoadMenu();
 
@@ -41,7 +45,7 @@ public:
 	void UnloadPlayerMenu();
 
 	UFUNCTION(Exec)
-	virtual void Host() override;
+	virtual void Host(FString SessionName_) override;
 
 	UFUNCTION(Exec)
 	virtual void Join(uint32 Index_) override;
@@ -54,11 +58,14 @@ public:
 
 private:
 
+	FString DesiredSessionName;
+
 	class UPlayerMenu* PlayerMenu;
 	class UMainMenu* Menu;
+	class ULoadingMenu* LoadingMenu;
 
+	TSubclassOf<class UUserWidget> LoadingMenuClass;
 	TSubclassOf<class UUserWidget> MenuClass;
-
 	TSubclassOf<class UUserWidget> PlayerMenuClass;
 
 	IOnlineSessionPtr SessionInterface;
