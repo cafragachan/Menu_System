@@ -22,10 +22,19 @@ public:
 	class UTextBlock* ServerName;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CurrentPlayersFraction;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* HostName;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* RowButton;
 
 	UFUNCTION()
 	void TextWidgetOnClicked();
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsSelected = false;
 
 	void Setup(class UMainMenu* Parent_, uint32 Index);
 

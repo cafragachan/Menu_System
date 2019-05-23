@@ -56,18 +56,22 @@ void UMainMenu::JoinOnClicked()
 
 }
 
-void UMainMenu::SetServerList(TArray<FString> ServerNames_)
+void UMainMenu::SetServerList(TArray<FServerData> ServerData_)
 {
 	if (ScrollBar && TextWidgetBase)
 	{
 		ScrollBar->ClearChildren();
 
 		uint32 i = 0;
-		for (auto& ServerName : ServerNames_)
+		for (auto& ServerData : ServerData_)
 		{
 			UTextWidget* TextWidget;
 			TextWidget = CreateWidget<UTextWidget>(this, TextWidgetBase);
-			TextWidget->ServerName->SetText(FText::FromString(ServerName));
+
+			TextWidget->ServerName->SetText(FText::FromString(ServerData.Name));
+			TextWidget->HostName->SetText(FText::FromString(ServerData.HostUserName));
+			TextWidget->CurrentPlayersFraction->SetText(FText::FromString(FString::Printf(TEXT("%i/%i"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
+
 			TextWidget->Setup(this, i);
 
 			ScrollBar->AddChild(TextWidget);
@@ -114,6 +118,27 @@ void UMainMenu::Setup()
 void UMainMenu::SetSelectedIndex(uint32 Index_)
 {
 	SelectedIndex = Index_;
+	UpdateChildren();
+}
+
+void UMainMenu::UpdateChildren()
+{
+	if (!ScrollBar) return;
+	int32 ChildrenCount = ScrollBar->GetChildrenCount();
+
+	for (int32 i = 0; i < ChildrenCount; ++i)
+	{	
+		auto TextRow = Cast<UTextWidget>(ScrollBar->GetChildAt(i));
+		if (TextRow)
+		{
+			TextRow->bIsSelected = false;
+
+			if (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i)
+			{
+				TextRow->bIsSelected = true;
+			}
+		}
+	}
 }
 
 void UMainMenu::OnLevelRemovedFromWorld(ULevel * InLevel, UWorld * InWorld)

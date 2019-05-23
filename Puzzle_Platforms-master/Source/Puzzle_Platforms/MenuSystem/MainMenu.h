@@ -8,6 +8,22 @@
 
 #include "MainMenu.generated.h"
 
+
+/**
+ * Comment
+ */
+USTRUCT()
+struct FServerData
+{
+	GENERATED_USTRUCT_BODY()
+
+	FString Name;
+	uint16 CurrentPlayers;
+	uint16 MaxPlayers;
+	FString HostUserName;
+};
+
+
 /**
  * 
  */
@@ -78,11 +94,13 @@ private:
 
 public:
 
-	void SetServerList(TArray<FString> ServerNames_);
+	void SetServerList(TArray<FServerData> ServerData_);
 
 	void SetMenuInterface(IMenuInterface* MenuInterface_) { MenuInterface = MenuInterface_; }
 
 	void Setup();
 
 	void SetSelectedIndex(uint32 Index_);
+
+	void UpdateChildren();
 };

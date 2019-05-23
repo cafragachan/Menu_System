@@ -61,29 +61,31 @@ void UPuzzlePlatformsGameInstance::Init()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OSS not found"));
-
 	}
 }
-
-
 
 void UPuzzlePlatformsGameInstance::OnFindSessionComplete(bool bwasSuccesful)
 {
 	if (bwasSuccesful && SessionSearch.IsValid() && Menu)
 	{
-		 TArray<FString> SessionNamesFound;
+		 TArray<FServerData> SessionDataFound;
 
 		auto SearchResultsPool = SessionSearch->SearchResults;
 
 		for (auto& Session : SearchResultsPool)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Session found: %s"), *Session.GetSessionIdStr());
-			SessionNamesFound.Add(Session.GetSessionIdStr());
+			FServerData Data;
+			Data.Name = Session.GetSessionIdStr();
+			Data.MaxPlayers = Session.Session.SessionSettings.NumPublicConnections;
+			Data.CurrentPlayers = Data.MaxPlayers - Session.Session.NumOpenPublicConnections;
+			Data.HostUserName = Session.Session.OwningUserName;
+
+			SessionDataFound.Add(Data);
 		}
 
-		Menu->SetServerList(SessionNamesFound);
+		Menu->SetServerList(SessionDataFound);
 	}
-
 }
 
 void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bool bwasSuccesful)
@@ -156,9 +158,19 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 	if (!SessionInterface.IsValid()) return;
 
 	FOnlineSessionSettings SessionSettings;
-	SessionSettings.bIsLANMatch = true;
+
+	if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
+	{
+		SessionSettings.bIsLANMatch = true;
+	}
+	else
+	{
+		SessionSettings.bIsLANMatch = false;
+	}
+
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.NumPublicConnections = 2;
+	SessionSettings.bUsesPresence = true;
 
 	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 }
@@ -176,7 +188,9 @@ void UPuzzlePlatformsGameInstance::Refresh()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = true;
+		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->MaxSearchResults = 100;
+		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Finding session..."));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}
