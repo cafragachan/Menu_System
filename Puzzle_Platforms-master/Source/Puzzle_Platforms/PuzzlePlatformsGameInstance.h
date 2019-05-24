@@ -12,6 +12,9 @@
 
 #include "PuzzlePlatformsGameInstance.generated.h"
 
+
+const static FName SESSION_NAME = NAME_GameSession;
+const static FName SESSION_NAME_CONSTANT_KEY = (TEXT("SessionName"));
 /**
  * 
  */
@@ -55,6 +58,8 @@ public:
 
 	UFUNCTION(Exec)
 	virtual void Refresh() override;
+
+	IOnlineSessionPtr GetSessionInterface() const { return SessionInterface; }
 
 private:
 

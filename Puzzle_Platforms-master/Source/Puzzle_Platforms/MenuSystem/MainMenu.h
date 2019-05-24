@@ -56,6 +56,9 @@ private:
 	class UButton* CancelButton;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* CancelHostButton;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
 	UPROPERTY(meta = (BindWidget))

@@ -16,10 +16,6 @@
 #include "UnrealNames.h"
 
 
-const static FName SESSION_NAME = NAME_GameSession;
-const static FName SESSION_NAME_CONSTANT_KEY = (TEXT("SessionName"));
-
-
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectIn)
 {
 	ConstructorHelpers::FClassFinder<UUserWidget> MainMenuWidgetClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -194,7 +190,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 	}
 
 	SessionSettings.bShouldAdvertise = true;
-	SessionSettings.NumPublicConnections = 2;
+	SessionSettings.NumPublicConnections = 5;
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.Set(SESSION_NAME_CONSTANT_KEY, DesiredSessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 

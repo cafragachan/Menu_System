@@ -30,6 +30,9 @@ bool UMainMenu::Initialize()
 	if (!CancelButton) return false;
 	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::BackMenu);
 
+	if (!CancelHostButton) return false;
+	CancelHostButton->OnClicked.AddDynamic(this, &UMainMenu::BackMenu);
+
 	if (!QuitButton) return false;
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
 

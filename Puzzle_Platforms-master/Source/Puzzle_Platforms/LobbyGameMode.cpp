@@ -6,6 +6,7 @@
 #include "GameMapsSettings.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "PuzzlePlatformsGameInstance.h"
 
 void ALobbyGameMode::PostLogin(APlayerController * NewPlayer)
 {
@@ -16,8 +17,8 @@ void ALobbyGameMode::PostLogin(APlayerController * NewPlayer)
 	if (PlayersNum >= 3)
 	{
 		FTimerHandle Timer;
-		GetWorldTimerManager().SetTimer(Timer, this, &ALobbyGameMode::PlayersServerTravel, 3.0f, false);
-
+		GetWorldTimerManager().SetTimer(Timer, this, &ALobbyGameMode::PlayersServerTravel, 25.0f, false);
+		
 	}
 }
 
@@ -36,4 +37,13 @@ void ALobbyGameMode::PlayersServerTravel()
 	bUseSeamlessTravel = true;
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+
+	auto PPGameInstance = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+
+	if (PPGameInstance)
+	{
+		IOnlineSessionPtr SessionInterface = PPGameInstance->GetSessionInterface();
+		SessionInterface->StartSession(SESSION_NAME);
+	}
+	
 }
