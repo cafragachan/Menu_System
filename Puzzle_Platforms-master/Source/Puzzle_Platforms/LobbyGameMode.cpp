@@ -14,7 +14,7 @@ void ALobbyGameMode::PostLogin(APlayerController * NewPlayer)
 
 	PlayersNum++;
 
-	if (PlayersNum >= 3)
+	if (PlayersNum >= 2)
 	{
 		FTimerHandle Timer;
 		GetWorldTimerManager().SetTimer(Timer, this, &ALobbyGameMode::PlayersServerTravel, 25.0f, false);
